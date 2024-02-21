@@ -1,0 +1,727 @@
+
+on death of player:
+	{ingame} is true
+	victim's gamemode is not spectator
+	if victim's tool or victim's offhand tool is totem of undying:
+		apply potion of blindness without any particles to attacker for 5 seconds
+		remove 1 totem of undying from victim
+		stop
+	loop {knight::*}:
+		loop-value is name of victim
+		send "あなたは騎士的な人に守られました" to victim
+		
+		remove all loop-value from {knight::*} 
+		cancel event
+		stop
+	set victim's gamemode to spectator 
+	cancel event
+	drop victim's skull named "%victim%"
+	if {role.%victim%} contains "§w":
+		remove 1 from {role.white.aaa}
+	if {role.%victim%} contains "§b":
+		remove 1 from {role.black.aaa}
+function giverole(n: number):
+	set {player::*} to shuffled {player::*}
+	set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito})
+	set {role.white.aaa} to {role.white}
+	set {role.black.aaa} to {role.black}+{role.wwolf}+{role.kaito}
+	loop {player::*}:
+		set {_P} to loop-value
+		set {role.%{_P}%} to {rolelist::2}
+	add {role.black} to {_aho}
+	loop {role.black} time:
+		set {_P} to {player::%loop-counter%}
+		set {role.%{_P}%} to {rolelist::1}
+	loop {role.yogen} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::3}
+	loop {role.knight} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::5}
+	loop {role.madman} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::7}
+	loop {role.wwolf} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::8}
+	loop {role.kyoyu} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::9}
+	loop {role.tan} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::10}
+	loop {role.kaito} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::12}
+	set {role.white.aaa} to {role.white.aaa}-{role.madman}
+	
+command /setting <text> <integer=0>:
+	permission: skript.admin
+	trigger:
+		if arg-2 < 0:
+			send "お願いだから0以上にしてくれ" to player
+			stop
+		if arg-1 is "ArrowDamage":
+			set {arrowdamage} to arg-2
+			broadcast "矢の上乗せダメージを%arg-2%に設定"
+		if arg-1 is "ArrowCoolTime":
+			set {arrowdcooltime} to arg-2
+			broadcast "矢のクールタイム%arg-2%秒に設定"
+		if arg-1 is "人狼":
+			set {role.black} to arg-2
+			broadcast "人狼数を%arg-2%に設定"
+		if arg-1 is "予言者":
+			set {role.yogen} to arg-2
+			broadcast "預言者数を%arg-2%に設定"
+		if arg-1 is "騎士":
+			set {role.knight} to arg-2
+			broadcast "騎士数を%arg-2%に設定"
+		if arg-1 is "狂人":
+			set {role.madman} to arg-2
+			broadcast "狂人数を%arg-2%に設定"
+		if arg-1 is "白狼":
+			set {role.wwolf} to arg-2
+			broadcast "白狼数を%arg-2%に設定"
+		if arg-1 is "共有者":
+			set {role.kyoyu} to arg-2
+			broadcast "共有者数を%arg-2%に設定"
+		if arg-1 is "探偵":
+			set {role.tan} to arg-2
+			broadcast "探偵数を%arg-2%に設定"
+		if arg-1 is "怪盗":
+			set {role.kaito} to arg-2
+			broadcast "怪盗数を%arg-2%に設定"
+		
+		set {_objective} to objective with id "test"
+		set score of {rolelist::1} for {_objective} to {role.black}
+		set score of {rolelist::7} for {_objective} to {role.madman}
+		set score of {rolelist::3} for {_objective} to {role.yogen}
+		set score of {rolelist::5} for {_objective} to {role.knight}
+		set score of {rolelist::8} for {_objective} to {role.wwolf}
+		set score of {rolelist::9} for {_objective} to {role.kyoyu}
+		set score of {rolelist::10} for {_objective} to {role.tan}
+		set score of {rolelist::12} for {_objective} to {role.kaito}
+		set score of {rolelist::2} for {_objective} to {player}-{role.black}-{role.yogen}-{role.knight}-{role.madman}-{role.wwolf}-{role.kyoyu}-{role.tan}-{role.kaito}
+command /start:
+	permission: skript.admin
+	trigger:
+		clear {item::17::*}
+		command "/team join nametagkiero @a"
+		command "/scoreboard objectives setdisplay list"
+		send title "3" with subtitle " " to all players
+		play sound "block.note_block.pling" with pitch 2 to all players
+		wait 1 second
+		play sound "block.note_block.pling" with pitch 2 to all players
+		send title "2" to all players
+		wait 1 second
+		play sound "block.note_block.pling" with pitch 2 to all players
+		send title "1" to all players
+		wait 1 second
+		clear {player::*}
+		set {stop} to true
+		set {player} to 0
+		play sound "item.totem.use" with volume 0.5 to all players
+		loop all players:
+			clear {rope.%loop-player%}
+			set the loop-player's tab list name to " "
+			loop-player's gamemode is not spectator
+			clear loop-player's inventory
+			set loop-player's gamemode to adventure
+			give a bow to loop-player
+			give a arrow to loop-player
+			#make loop-player wear stone button of curse of binding
+			give {item::rod} to loop-player
+			randomitem(loop-player)
+			add loop-player to {player::*} 
+			add 1 to {player}
+		giverole({player})
+		add all players to {_bar}
+		set {_bar} to boss bar with id "timer" with title "残り時間 12000" with color white with progress 50
+		wait 1 tick
+		clear {stop}
+		loop {player::*}:
+			set {_P} to loop-value
+			send "あなたは%{role.%{_P}%}%です" to loop-value
+			if {role.%{_P}%} is {rolelist::1} or {rolelist::8}:
+				send "仲間は %blackis()%" to loop-value
+			if {role.%{_P}%} is {rolelist::9}:
+				send "仲間は %kyoyuis()%" to loop-value
+		set {ingame} to true
+		set bar visibility of {_bar} to true
+		loop 12000 time:
+			set {_time} to (12000-loop-number)/20
+			set {_time} to round({_time} ,0)
+			set bar title of {_bar} to "残り時間 %{_time}%"
+			set bar progress of {_bar} to {_time}/6
+			add all players to {_bar}
+			loop all players:
+				set {_P} to loop-player
+				send action bar "あなたは%{role.%{_P}%}%です" to loop-player
+			if {role.black.aaa} = 0:
+				gmend("white")
+			if {role.white.aaa} = 0:
+				gmend("black")
+			wait 1 tick
+			if loop-number is 10800:
+				add potion effect of glowing of tier 1 for 60 seconds to potion effects of all players
+			if {stop} is true:
+				stop
+		gmend("white")
+command /end:
+	permission: skript.admin
+	trigger:
+		gmend("force")
+function gmend(winner :text):
+	clear {item::17::*}
+	clear {item::7::1::*}
+	clear {item::7::0::*}
+	set {stop} to true
+	set {stopvp} to true
+	set all players's gamemode to adventure
+	broadcast ""
+	clear {item::21::*}
+	loop {player::*}:
+		set arrows stuck in loop-value to 0
+		clear {rope.%loop-value%}
+		broadcast  "%loop-value% ： %{role.%loop-value%}%"
+		delete {role.%loop-value%}
+	heal all players by 20
+	kill all dropped items
+	kill all arrows
+	kill all skeletons
+	clear {knight::*}
+	clear all the potion effects of all players
+	clear {ingame}
+	clear elements from 1 to 20 of {player::*}'s inventory
+	clear {player::*}
+	command "/bossbar set skbee:timer visible false"
+	if {_winner} is "force":
+		send title "ゲーム終了" with subtitle "強制終了" to all players
+	if {_winner} is "black":
+		send title "ゲーム終了" with subtitle "§4黒陣営の勝利" to all players
+		send "§4黒陣営の勝利" to all players
+	if {_winner} is "white":
+		send title "白陣営の勝利" to all players
+		send "白陣営の勝利" to all players
+	loop all players:
+		clear {item::7::5::%loop-player%}
+		clear {item::7::5::%loop-player%::0}
+		set the loop-player's tab list name to name of loop-player
+		play sound "entity.wither.spawn" with pitch 0.5 to the loop-player
+	wait 3 tick
+	clear {stop}
+	clear {stopvp}
+on item damage:
+	event-item is bow
+	cancel event
+on right click:
+	player's tool is prismarine shard
+	cancel event
+	remove 1 prismarine shard from player's inventory
+	loop 3 time:
+		trident(player)
+		
+function trident(p: player):
+	play sound "item.trident.throw" to {_p}
+	make {_p} shoot a trident at speed 5
+	set {_t} to last shot trident
+	set gravity of {_t} to off
+	set glowing of {_t} to true
+	while {_t} is alive:
+		teleport {_t} to location of {_t}
+		push {_t} in the direction of {_p} at speed 0.5
+		wait 1 tick
+		
+on shoot:
+	if event-projectile is spectral arrow:
+		shooter's tool is not crossbow
+		cancel event
+	if event-projectile is tipped arrow:
+		cancel event
+	if shooter's gamemode is spectator:
+		cancel event
+	projectile is an arrow
+	remove all arrow from shooter's inventory
+	loop {arrowdcooltime} time:
+		wait 1 seconds
+	give arrow to the shooter
+on damage by arrow:
+	increase damage by {arrowdamage}
+function randomitem(player :player):
+	give {item::%random integer from 1 to {item::a}%} to {_player}
+on right click:
+	set {_tool} to player's tool
+	{_tool} is {item::rod}
+	cancel event
+	if {role.%player%} is {rolelist::1} or {rolelist::8}:
+		send "[杖]仲間は %blackis()%" to player
+		stop
+	if {role.%player%} is {rolelist::9}:
+		send "[杖]仲間は %kyoyuis()%" to player
+		stop
+	abilitymenu(player)
+	stop
+on right click:
+	set {_tool} to player's tool
+	{_tool} is {item::4}
+	cancel event
+	loop all players:
+		play sound "entity.lightning_bolt.thunder" with pitch 2 to the loop-player
+		loop-player is not player
+		apply potion of blindness without any particles to loop-player for 10 seconds
+	remove {_tool} from player's inventory
+	stop
+on right click:
+	set {_tool} to player's tool
+	{_tool} is {item::9}
+	cancel event
+	set {_loc} to player's location
+	loop all players:
+		loop blocks in radius 15 around {_loc}:
+			loop-block is not air
+			loop-block is not {_loc}
+			make loop-player see loop-block as air
+			make player see loop-block as glass
+	remove {_tool} from player's inventory
+	wait 10 second
+	loop all players:
+		loop blocks in radius 15 around {_loc}:
+			loop-block is not air
+			make loop-player see loop-block as loop-block
+	stop
+on right click:
+	set {_tool} to player's tool
+	{_tool} is {item::10}
+	cancel event
+	set {_np} to name of player
+	spawn skeleton at the player:
+		set {_s} to skeleton
+		disguise skeleton as "%{_np}%"
+		equip skeleton with stone button
+		set name of the skeleton to "%{_np}%" 
+	remove {_tool} from player's inventory
+	wait 16 seconds
+	kill {_s}
+
+
+	
+
+on right click:
+	set {_tool} to player's tool
+	{_tool} is {item::11}
+	cancel event
+	make the player shoot snowball at speed 0.8
+	command "execute as @e[type=snowball] at @s run data merge entity @s  {Item:{id:""minecraft:lead"",Count:1b}}" 
+	remove {_tool} from player's inventory
+	stop
+on load:
+	set {item::1} to totem of undying
+	set {item::2} to potion of invisibility named "透明化" with lore "30seconds tier未指定" and "体に刺さった矢が消える"
+	set {item::3} to potion of leaping named "跳躍力" with lore "30seconds tier15"
+	set {item::4} to sunflower named "停電"
+	set {item::4::time} to 10
+	set {item::5} to shield named "脆い盾"
+	set {item::6} to splash potion named "shine！" with lore "即死ポーションだよ" 
+	set {item::7} to arrow named "トラップ" with lore "クリックで種類を指定して取り出せる%nl%取り出して出きたたやつを右クリックで設置%nl%[tips]重ねて置くと効果時間が伸びたり複数同時にデバフ与えれる"
+	set {item::7::1} to arrow named "トラップ(盲目)" with lore "右クリックで設置%nl%使用者以外が回収すると盲目(15秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::2} to arrow named "トラップ(消失)" with lore "右クリックで設置%nl%使用者以外が回収すると地形消失(15秒,半径10)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::3} to arrow named "トラップ(拘束)" with lore "右クリックで設置%nl%使用者以外が回収すると鈍足(20秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 		
+	set {item::7::4} to arrow named "トラップ(発光)" with lore "右クリックで設置%nl%使用者以外が回収すると発光(10秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::5} to arrow named "トラップ(偏執)" with lore "右クリックで設置%nl%使用者以外が回収すると視点変化(10回,10秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::6} to arrow named "トラップ(落雷)" with lore "右クリックで設置%nl%使用者以外が回収すると雷どーん！(1回)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 
+	set {item::8} to potion of speed named "敏敏" with lore "30seconds tier15"
+	set {item::9} to barrier named "地形消失" with lore "15m以内のプレイヤーに10秒間独特な移動阻害を与える"
+	set {item::10} to spectral arrow named "分身" with lore "他プレイヤーに攻撃をする分身を出します 16秒で死にます"
+	set {item::11} to lead named "縄" with lore "使うとなんか飛んでいきます 当てると相手を拘束します 外すと帰ってきます"
+	add potion effect of instant damage of tier 79 for 20 seconds to potion effects of {item::6}
+	set {item::12} to 3 ender pearl named "ただのエンパ"
+	set {item::13} to stone shovel damaged by 2048+131 named "ドンキ" with lore "2048ダメージを与える"
+	set {item::14} to tipped arrow named "とてもバフ" with lore "クリックした瞬間自分にバフ(とか)がつく"
+	set {item::15} to compass with lore "利き手に持っていると最寄りのプレイヤーとの距離と方向を示して来やがる"
+	set {item::16} to elytra named "えりとら"
+	set {item::17} to end portal frame named "テレポーター" with lore "右クリックで現在の位置を保存する" and "保存してある状態で右クリックを押したとき保存した位置に転移される"
+	set {item::18} to nether star named "自由選択" with lore "右クリックでアイテム選択メニューを表示"
+	set {item::19} to crossbow damaged by 462 with lore "着弾地点にいるプレイヤーをひどい目にあわせることができる" with nbt from "{ChargedProjectiles:[{id:""minecraft:spectral_arrow"",Count:1b},{id:""minecraft:spectral_arrow"",Count:1b},{id:""minecraft:spectral_arrow"",Count:1b}],Charged:1b}"
+	set {item::20} to iron block named "硬化" with lore "12秒無敵+鈍足2"
+	set {item::21} to 2 prismarine shard named "操弾" with lore "右クリックで操弾のトライデントが飛ぶ"
+	set {item::22} to ender eye named "パラノイヤ(笑)" with lore "somの魔法職が使う魔法の一つ" and "§f周囲のプレイヤーの視点をランダムな方向に向けちゃう！%nl%§f発動回数15%nl%§f発動間隔0.5秒%nl%§f半径10"
+	set {item::23} to tnt named "即死地雷" with lore "拾った人は死ぬ%nl%だれであろうともしぬ"
+	set {item::5143150} to rose bush named "こいしちゃん最高！"
+	set {item::a} to 23
+#	add potion effect of night vision of tier 5 for 6 seconds to potion effects of {item::14}
+	add potion effect of darkness of tier 1 for 3 seconds to potion effects of {item::14}
+	add potion effect of resistance of tier 5 for 4 seconds to potion effects of {item::14}
+	add potion effect of speed of tier 10 for 4 seconds to potion effects of {item::14}
+#	add potion effect of blindness of tier 10 for 1 tick to potion effects of {item::14}
+	add potion effect of strength of tier 4 for 4 seconds to potion effects of {item::14}
+	add potion effect of invisibility of tier 4 for 4 seconds to potion effects of {item::14}
+	add potion effect of glowing of tier 1 for 4 seconds to potion effects of {item::14}
+	set {item::rod} to blaze rod named "杖" with lore "能力を使用するときに右クリックで使います" and "共有者,人狼,白狼が使うと仲間をチャットに表示します"
+	set {rolelist::1} to "§b§c人狼§r"
+	set {rolelist::2} to "§w§a村人§r"
+	set {rolelist::3} to "§w§9予言者§r"
+	set {rolelist::4} to "§w予言者[使用済み]§r" 
+	set {rolelist::5} to "§w騎士§r"
+	set {rolelist::6} to "§w騎士[使用済み]§r"
+	set {rolelist::7} to "§d狂人§r"
+	set {rolelist::8} to "§b§f§l白狼§r"
+	set {rolelist::9} to "§w§2共有者§r"
+	set {rolelist::10} to "§w§9探偵§r"
+	set {rolelist::11} to "§w探偵[使用済み]§r"
+	set {rolelist::12} to "§b怪盗§r"
+	set {rolelist::13} to "§b怪盗[使用済み]§r"
+function trapmenu(p: player):
+	set {_gui} to chest inventory with 1 rows named "トラップの種類を選択"
+	loop {item::7::*}:
+		set slot loop-counter - 1 of {_gui} to loop-value with lore lore of loop-value and random uuid 
+	open {_gui} to {_p}
+function abilitymenu(p: player):
+	set {_gui} to chest inventory with 6 rows named "能力使用対象を選択"
+	loop {player::*}:
+		set slot loop-counter - 1 of {_gui} to loop-value's skull named "%loop-value%"
+	open {_gui} to {_p}
+
+on inventory click:
+	name of event-inventory is "能力使用対象を選択"
+	cancel event
+	event-inventory is not player's inventory
+	event-slot is not empty
+	set {_P} to player
+	set {_aho} to event-item's name parsed as player
+	if event-item's name is "%player%":
+		send "[杖]それはお前だ" to player
+		stop
+	if {role.%{_P}%} is not {rolelist::3} or {rolelist::5} or {rolelist::12}:
+		send "[杖]お前に能力ないです。" to player
+		stop
+	if {role.%{_P}%} is {rolelist::3}:
+		if {role.%{_aho}%} contains "§b":
+			{role.%{_aho}%} is not {rolelist::8}
+			set {role.%{_P}%} to {rolelist::4}
+			send "[杖]おめでとう %event-item's name% は§l§c黒§rだ" to player
+			stop
+		set {role.%{_P}%} to {rolelist::4}
+		send  "%event-item's name%は白です" to player
+	if {role.%{_P}%} is {rolelist::5}:
+		add event-item's name to {knight::*}
+		send "[杖]今回あなたは%event-item's name% を守ることにした"
+		set {role.%{_P}%} to {rolelist::6}
+	if {role.%{_P}%} is {rolelist::12}:
+		set {_temp} to name of event-item parsed as player
+		wait 2 tick
+		open {_temp}'s inventory to the player
+		set  {role.%{_P}%} to {rolelist::13}
+on inventory click:
+	event-inventory is not player's inventory
+	name of event-inventory is not "能力使用対象を選択" 
+	name of event-inventory is not "アイテムを選べ！"
+	event-slot is not empty
+	wait 1 tick
+	give event-item to the player
+	close the inventory view for player
+on tab complete of "/setting":
+	set tab completions for position 1 to "人狼", "予言者", "騎士", "狂人", "白狼", "共有者", "探偵", "怪盗", "ArrowCoolTime" and "ArrowDamage"
+	set tab completions for position 2 to "任意の数字を入力" and "人狼と白陣営の役職が1以上 村人が0以上になるようにしてください"
+	
+on quit:
+	player's gamemode is adventure
+	{ingame} is true
+	set {_P} to player
+	if {role.%{_P}%} contains "§w":
+		remove 1 from {role.white.aaa}
+	if {role.%{_P}%} contains "§b":
+		remove 1 from {role.black.aaa}
+	while player is offline:
+		wait 1 tick
+		{stop} is true
+		stop
+	wait 1 tick
+	player is online
+	if {role.%{_P}%} contains "§w":
+		add 1 to {role.white.aaa}
+	if {role.%{_P}%} contains "§b":
+		add 1 to {role.black.aaa}
+function blackis() :: text:
+	loop {player::*}:
+		{role.%loop-value%} contains "§b"
+		add loop-value to {_a::*}
+	return "%{_a::*}%"
+function kyoyuis() :: text:
+	loop {player::*}:
+		{role.%loop-value%} is {rolelist::9}
+		add loop-value to {_a::*}
+	return "%{_a::*}%"
+on arrow pickup:
+    cancel the event
+    
+on join:
+	set {player} to real online player count
+	{ingame} is true
+	{player::*} do not contain player
+	send "今人狼中なのでとえあえず観戦にさせときます" to player 
+	set player's gamemode to spectator
+on player pick up of player skull:
+	if {role.%player%} is not {rolelist::10}:
+		cancel event
+		stop
+	set {_aho} to event-item's name parsed as player
+	send "%event-item's name%の役職は%{role.%{_aho}%}%" to player
+	set {role.%player%} to {rolelist::11}
+on quit:
+	wait 5 tick
+	set {player} to real online player count
+on rightclick using a arrow:
+	loop 7 time:
+		event-item's name is name of {item::7::%loop-number%}
+		set {_a} to true
+	{_a} is true
+	drop event-item at player without velocity
+	set {_dropped} to last dropped item 
+	add event-item to {item::7::1::%player%::*}
+	set pickup delay of {_dropped} to 0 tick
+	remove event-item from player's inventory
+	wait 1 tick
+	set glowing of {_dropped} to true
+	loop all players:
+		loop-player is not player
+		make {_dropped} disappear from loop-player 
+	
+
+on player pick up of arrow:
+	cancel event if event-item is 0 air
+	if {item::7::1::%player%::*} contains event-item:
+		cancel event
+		stop
+	loop 6 time:
+		event-item's name is name of {item::7::%loop-number%}
+		set {_type} to name of {item::7::%loop-number%}
+	cancel event
+	make {_dropped} appear from all players
+	delete event-dropped item
+	remove event-item from {item::7::1::%player%::*} 
+	play sound "entity.elder_guardian.curse" with pitch 2 to player
+	if {_type} is name of {item::7::1}:
+		apply potion of blindness without any particles to player for 15 seconds
+	if {_type} is name of {item::7::2}:
+		set {_loc} to player's location
+		loop blocks in radius 5 around {_loc}:
+			loop-block is not air
+			loop-block is not {_loc}
+			make player see loop-block as air
+		wait 15 second
+		loop blocks in radius 10 around {_loc}:
+			loop-block is not air
+			make player see loop-block as loop-block
+	if {_type} is name of {item::7::3}:
+		apply potion of slowness of tier 126 without any particles to player for 15 seconds
+	if {_type} is name of {item::7::4}:
+		apply potion of glowing without any particles to player for 15 seconds
+	if {_type} is name of {item::7::5}:
+		add 15 to {item::7::5::%player%}
+		{item::7::5::%player%::0} is not set
+		set {item::7::5::%player%::0} to true
+		while {item::7::5::%player%} is not 0:
+			command "/execute as %player% at @s run tp @s ~ ~ ~ %random integer from -180 to 180% %random integer from -90 to 90%"
+			wait 1 second
+			remove 1 from {item::7::5::%player%}
+			{stopvp} or {stop} is true
+			stop loop
+		clear {item::7::5::%player%}
+		clear {item::7::5::%player%::0}
+	if {_type} is name of {item::7::6}:
+		strike lightning effect at the player
+		create a safe explosion of force 1 at the player
+
+on pickup of tnt:
+	kill the player
+on damage:
+	if victim is defending with a shield:
+		play sound "entity.wither.break_block" to attacker and victim
+	if attacker's tool is {item::13}:
+		increase the damage by 2048
+command /test <integer>:
+	permission: op
+	trigger:
+		give {item::%arg-1%} to the player
+on entity target:
+	name of target is name of entity
+	cancel event
+	loop shuffled all players:
+		loop-player is not name of entity parsed as player
+		make entity pathfind towards loop-player at speed 2
+on entity target:
+	target is not set
+	loop shuffled all players:
+		loop-player is not name of entity parsed as player
+		make entity pathfind towards loop-player at speed 2
+every tick:
+	loop all players:
+		set loop-player's food level to 9.5
+on projectile hit:
+	if event-projectile is trident:
+		if shooter is victim:
+			cancel event
+		kill event-projectile
+		victim is set
+		set victim's no damage tick to 0
+	event-projectile is snowball
+	victim is not set
+	give {item::11} to the shooter
+on projectile collide:
+	event-projectile is snowball
+	play sound "entity.arrow.hit_player" with pitch 0.5 to shooter
+	{rope.%event-entity%} is not true
+	set {rope.%event-entity%} to true
+	set {_loc} to event-entity's location
+	loop 300 time:
+		teleport the event-entity to {_loc}
+		wait 1 tick
+		if {stop} is true:
+			stop loop
+		event-entity's gamemode is spectator
+		clear {rope.%event-entity%}
+		stop
+	clear {rope.%event-entity%}
+on kick:
+	cancel event
+On Projectile Hit :
+	event-projectile is spectral arrow
+	delete event-projectile
+	set arrow knockback strength of event-projectile to 10
+
+on shoot:
+	shooter's tool is crossbow
+	event-projectile is spectral arrow
+	while event-projectile is alive:
+		set {_loc} to event-projectile's location
+		spectral_arrow(shooter, {_loc})
+		wait 1 tick
+function spectral_arrow(shooter: player, loc: location):	
+	loop all players:
+		loop blocks in radius 3 around {_loc}:
+			loop-block is not air
+			loop-block is not {_loc}
+			make loop-player see loop-block as air
+			make {_shooter} see loop-block as glass
+	loop all players in radius 3 around {_loc}:
+		loop-player is not {_shooter}
+		add potion effect of glowing of tier 1 for 15 seconds to potion effects of loop-player
+	wait 5 second
+	loop all players:
+		loop blocks in radius 3 around {_loc}:
+			loop-block is not air
+			make loop-player see loop-block as loop-block
+on player drink:
+	event-item is {item::8}
+	cancel event
+	add potion effect of speed of tier 15 for 30 seconds to player's active potion effects
+	remove event-item from player's inventory
+on player drink:
+	event-item is {item::2}
+	cancel event
+	add potion effect of invisibility for 30 seconds to player's active potion effects
+	set arrows stuck in player to 0
+	remove event-item from player's inventory
+on player drink:
+	event-item is {item::3}
+	cancel event
+	add potion effect of jump boost of tier 15 for 30 seconds to player's active potion effects
+	remove event-item from player's inventory
+on right click:
+	event-item is {item::7} or {item::7::*}
+	cancel event
+	if {item::7::0::%player%} is set:
+		send "再使用まであと%{item::7::0::%player%}%" to player
+		stop
+	trapmenu(player)
+	set {item::7::0::%player%} to 30
+	loop 30 time:
+		wait 1 second
+		remove 1 from {item::7::0::%player%}
+		{stop} or {stopvp} is true
+		stop loop
+	clear {item::7::0::%player%}
+	
+on right click:
+	event-item is {item::14}
+	cancel event
+	set {_bar} to boss bar of player
+	set bar flag darken sky of {_bar} to true
+	add potion effects of event-item to potion effects of player
+	remove event-item from player's inventory
+	add potion effect of night vision of tier 5 for 1 seconds to potion effects of player
+	loop 16 time:
+		add potion effect of blindness of tier 10 for 2 tick to potion effects of player
+		wait 3 tick
+	wait 1 second
+	set bar flag darken sky of {_bar} to false
+on right click:
+	event-item is {item::17}
+	cancel event
+	set {_P} to player
+	if {item::17::%{_P}%} is not set:
+		send "位置を保存しました" to player
+		play sound "item.trident.return" with volume 2 and pitch 2 to player
+		set {item::17::%{_P}%} to player's location
+	else:
+		send "保存されていた位置に転移して保存されていた位置を抹消しました" to player
+		teleport player to {item::17::%{_P}%}
+		play sound "entity.player.teleport" to player
+		clear {item::17::%{_P}%}
+on right click:
+	event-item is {item::18}
+	cancel event
+	item_select(player)
+on right click:
+	event-item is {item::20}
+	cancel event
+	add potion effect of resistance of tier 5 for 12 seconds to potion effects of player
+	add potion effect of slowness of tier 2 for 12 seconds to potion effects of player
+	add potion effect of darkness of tier 2 for 12 seconds to potion effects of player
+	remove event-item from player's inventory
+on player's held item change:
+	player's tool is compass
+	while player's tool is compass:
+		set {_n} to first element of all players
+		if first element of all players is player:
+			set {_n} to 2nd element of all players
+		loop all players:
+			gamemode of loop-player is not spectator
+			loop-player is not player
+			loop-player's gamemode is adventure
+			distance between loop-player and player's location is smaller than distance between {_n} and player's location
+			loop-player's gamemode is adventure
+			set {_n} to loop-player
+		send title "" with subtitle "%distance between {_n} and player's location%m" to player with fade in 0 second 
+		set player's compass target to {_n}'s location
+		wait 1 tick
+on right click:
+	event-item is {item::22}
+	cancel event
+	remove event-item from player's inventory
+	loop 15 time:
+		loop all players in radius 10 meters of player:
+			loop-player is not player
+			command "/execute as %loop-player% at @s run tp @s ~ ~ ~ %random integer from -180 to 180% %random integer from -90 to 90%"
+		wait 0.5 seconds
+	
+on click:
+	player's tool is compass
+	{compass.%player%} is not true
+	player command "/tool unbind"
+	set {compass.%player%} to true
+on item damage:
+	event-item is elytra
+	increase the damage by 39
+on click on a chest or dropper or dispenser or furnace:
+	cancel event
+	wait 2 tick
+	close the inventory view for player
+	

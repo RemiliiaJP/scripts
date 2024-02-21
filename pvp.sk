@@ -1,0 +1,235 @@
+command /start-pvp:
+	permission: op
+	trigger:
+		set {stopvp} to true
+		command "/scoreboard objectives setdisplay list kills"
+		command "/bossbar set skbee:timer visible true"
+		command "/scoreboard objectives setdisplay sidebar"
+		set {pvp::ingame} to true
+		roundstart(" ")
+		wait 10 second
+		set {_bar} to boss bar with id "timer" with title "残り時間 12000" with color white with progress 50
+		clear {stop}
+		clear {stopvp}
+		loop {pvp::time}*20 time:
+			loop all players:
+				set the loop-player's tab list name to name of loop-player
+				set slot 1 of loop-player to arrow
+				set slot 0 of loop-player to bow
+			set {_time} to {pvp::time}-loop-number/20
+			set {_time} to round({_time} ,0)
+			set bar title of {_bar} to "残り時間 %{_time}%"
+			set bar progress of {_bar} to {_time}/({pvp::time}/100)
+			wait 1 tick
+			{stopvp} is true
+			stop loop
+		clear {pvp::ingame}
+		broadcast "ラウンド勝利数：%nl% §c赤：%{pvp::red::wins}% %nl% §9青：%{pvp::blue::wins}%"
+		send title "終了！" to all players
+		clear {pvp::red::wins}
+		clear {pvp::blue::wins}
+		command "/bossbar set skbee:timer visible false"
+		command "/scoreboard objectives setdisplay sidebar test"
+		clear inventory of all players
+		set {stop} to true
+		set {stopvp} to true
+		clear {player::*}
+		set arrows stuck in all players to 0
+		wait 3 tick
+		clear {stop}
+		clear {stopvp}
+command /setting-pvp <text> <integer>:
+	permission: op
+	trigger:
+		
+		if arg-1 is "redspawn":
+			set {pvp::red::spawn} to player's location
+		if arg-1 is "bluespawn":
+			set {pvp::blue::spawn} to player's location
+		if arg-1 is "time":
+			set {pvp::time} to arg-2
+			broadcast "[pvp] 時間を%arg-2%に設定"
+on tab complete of "/setting-pvp":
+	set tab completions for position 1 to "redspawn", "bluespawn" and "time"
+	set tab completions for position 1 to "time以外のときは適当に指定してください" and "timeのときの単位です！"
+on load:
+	set {pvp::red} to team named "RED"
+	set {pvp::blue} to team named "BLUE"
+	set team color of {pvp::red} to red
+	set team color of {pvp::blue} to blue
+on drop:
+	{pvp::ingame} is true
+	event-item is not {item::7}
+	cancel event
+on damage by arrow:
+	{pvp::ingame} is true
+	set damage to 30
+	
+function item_select(p: player):
+	set {_gui} to chest inventory with 3 rows named "アイテムを選べ！"
+	loop {item::a} time:
+		set slot loop-number - 1 of {_gui} to {item::%loop-number%}
+	open {_gui} to {_p}
+
+on inventory click:
+	name of event-inventory is "アイテムを選べ！"
+	cancel event
+	event-inventory is not player's inventory
+	event-slot is not empty
+	loop {item::a} time:
+		remove all {item::%loop-number%} from player's inventory
+	set offhand tool of player to event-item
+on death of player:
+	{pvp::ingame} is true
+	cancel event
+	{slecting} is not true
+	broadcast "%name of attacker%が%name of victim%を倒した"
+	set victim's gamemode to spectator
+	set {_team} to team of victim
+	if {_team} is {pvp::red}:
+		remove 1 from {team.red}
+			
+	if {_team} is {pvp::blue}:
+		remove 1 from {team.blue}
+	if {team.blue} is 0:
+		roundstart("red")
+		stop
+	if {team.red} is 0:
+		roundstart("blue")
+function roundstart(winner: text):
+	
+	if {_winner} is "red":
+		add 1 to {pvp::red::wins}
+		broadcast "§c赤チームラウンド勝利(%{pvp::red::wins}%)"
+	else if {_winner} is "blue":
+		add 1 to {pvp::blue::wins}
+		broadcast "§9青チームラウンド勝利(%{pvp::blue::wins}%)"
+	set arrows stuck in all players to 0
+	clear {item::17::*}
+	clear {item::21::*}
+	heal all players by 20
+	kill all dropped items
+	kill all skeletons
+	clear all the active potion effects of all players
+	set {stop} to true
+	clear inventory of all players
+	set gamemode of all players to adventure
+	set {slecting} to true
+	wait 1 tick
+	loop all players:
+		set slot 8 of loop-player to {item::18}
+	play sound "block.anvil.use" with volume 0.5 and pitch 0.5  to all players
+ 
+	loop 10*20 time:
+		send action bar "pvp開始まで% round(10-loop-number/20, 0)%" to all players
+		loop all players:
+			if name of loop-player's current inventory is not "アイテムを選べ！":
+				item_select(loop-player)
+		wait 1 tick
+	loop all players:
+		loop-player's offhand tool is not air
+		set slot 8 of loop-player to loop-player's offhand tool
+		clear loop-player's offhand tool
+	kill all dropped items
+	kill all skeletons
+	clear {item::17::*}
+	play sound "entity.player.levelup" with pitch 0.6 to all players at all players
+	clear {stop}
+	clear {slecting}
+	set {team.red} to 0
+	set {team.blue} to 0
+	set {player::*} to all players
+	loop all players:
+		set {_team} to team of loop-player
+		if {_team} is {pvp::red}:
+			teleport the loop-player to {pvp::red::spawn}
+			add 1 to {team.red}
+		if {_team} is {pvp::blue}:
+			teleport the loop-player to {pvp::blue::spawn}
+			add 1 to {team.blue} 
+	close inventory for all players
+	heal all players by 20
+on right click on a dispenser:
+	cancel event
+on quit:
+	{pvp::ingame} is true
+	player's gamemode is not spectator
+	set {_team} to team of player
+	set {_r} to 0
+	set {_b} to 0
+	wait 1 tick
+	loop all players:
+		set {_team} to team of loop-player
+		if {_team} is {pvp::red}:
+			add 1 to {_r}
+		if {_team} is {pvp::blue}:
+			add 1 to {_b}	
+	if {_r} is 0:
+		gmend("force")
+		stop
+	if {_b} is 0:
+		gmend("force")
+		stop
+	if {_team} is {pvp::red}:
+		remove 1 from {team.red}
+	if {_team} is {pvp::blue}:
+		remove 1 from {team.blue}
+	if {team.blue} is 0:
+		roundstart("red")
+	if {team.red} is 0:
+		roundstart("blue")
+	while player is offline:
+		wait 1 tick
+		{stop} is true
+		stop
+	{pvp::ingame} is true
+	if {_team} is {pvp::red}:
+		add 1 to {team.red}
+	if {_team} is {pvp::blue}:
+		add 1 to {team.blue}
+		
+command /teamrandom:
+	permission: op
+	trigger:
+		{pvp::ingame} is not true
+		loop all players:
+			command "/team join RED %loop-player%"
+			add 1 to {_p}
+		loop round({_p}/2, 0) time:
+			command "/team join BLUE @r"
+		
+
+every 10 second:
+	set {_objective} to objective with id "ping"
+	loop all players:
+		set score of loop-player for {_objective} to ping of loop-player
+command /send <player>:
+	trigger:
+		connect arg to "lobby"
+on join:
+	{pvp::ingame} is true
+	{player::*} do not contain player
+	set player's gamemode to spectator
+	loop all players:
+		add 1 to {_p}
+		set {_team} to team of loop-player
+		if {_team} is {pvp::red}:
+			add 1 to {_r}
+		if {_team} is {pvp::blue}:
+			add 1 to {_b}
+	set {_p} to mod({_p}, 2)
+	if {_p} is 0:
+		if {_r} < {_b}:	
+			add player to {pvp::red}
+		if {_b} < {_r}:	
+			add player to {pvp::blue}	
+	else:
+		if chance of 50%:
+			add player to {pvp::red}
+		else:
+			add player to {pvp::blue}
+
+	send "pvpモード中に途中参加したので雑にチーム入れました" to player
+	send "次のラウンドから参加できます" to player
+
+
