@@ -59,7 +59,7 @@ on load:
 	set team color of {pvp::blue} to blue
 on drop:
 	{pvp::ingame} is true
-	event-item is not {item::7}
+	event-item is not {item::23}
 	cancel event
 on damage by arrow:
 	{pvp::ingame} is true
