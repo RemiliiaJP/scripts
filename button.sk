@@ -1,0 +1,25 @@
+on load:
+	set {item::vote} to diamond horse armor named "§5Diamante's Handle" with lore "§8Precursor Relic%nl% %nl%§7The hilt of the largest sword%nl%§7known to humankind.%nl% %nl%§eRight-click to view vote!%nl% %nl%§5§lEPIC DUNGEON ITEM"
+on rightclick on a mangrove button:
+	set {_loc} to player's location
+	loop 20 time:
+		send title "§c§o§lDiscuss!" to all players with fade-in 0 tick if mod(loop-number, 2) is 0
+		send title "§e§o§lDiscuss!" to all players with fade-in 0 tick if mod(loop-number, 2) is not 0
+		loop 21-loop-number time:
+			play sound "block.note_block.didgeridoo" with volume 1 and pitch 0.6 at player
+		wait 1 tick
+	teleport all players to {_loc}
+	give {item::vote} to all players
+on right click:
+	set {_tool} to player's tool
+	{_tool} is {item::vote}
+	cancel event
+	votemenu(player)
+function votemenu(p: player):
+	set {_gui} to chest inventory with 6 rows named "投票先を選ぼう！"
+	loop {player::*}:
+		loop-value's gamemode is not spectator
+		set slot loop-counter - 1 of {_gui} to loop-value's skull named "%loop-value%"
+	open {_gui} to {_p} 
+
+	

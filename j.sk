@@ -112,6 +112,7 @@ command /setting <text> <integer=0>:
 command /start:
 	permission: skript.admin
 	trigger:
+		expand world border of world "world" to 10000 in 1 seconds
 		clear {item::17::*}
 		command "/team join nametagkiero @a"
 		command "/scoreboard objectives setdisplay list"
@@ -243,10 +244,8 @@ on shoot:
 	if event-projectile is spectral arrow:
 		shooter's tool is not crossbow
 		cancel event
-	if event-projectile is tipped arrow:
-		cancel event
-	if shooter's gamemode is spectator:
-		cancel event
+	cancel event if event-projectile is tipped arrow
+	cancel event if shooter's gamemode is spectator
 	projectile is an arrow
 	remove all arrow from shooter's inventory
 	loop {arrowdcooltime} time:
@@ -278,6 +277,23 @@ on right click:
 		apply potion of blindness without any particles to loop-player for 10 seconds
 	remove {_tool} from player's inventory
 	stop
+on right click:
+	set {_tool} to player's tool
+	{_tool} is {item::24}
+	cancel event
+	remove event-item from player's inventory
+	set warning distance of world border of world "world" to 150
+	shrink world border of world "world" to 150 in 1 tick
+	shrink world border of world "world" to 15 in 30 seconds
+	loop 30*20 time:
+		set border center of world border of world "world" to location of player
+		wait 1 tick
+		{stop} or {stopvp} is true
+		stop loop
+	wait 5 second
+	expand world border of world "world" to 10000 in 30 seconds
+	set warning distance of world border of world "world" to 1
+	
 on right click:
 	set {_tool} to player's tool
 	{_tool} is {item::9}
@@ -322,6 +338,7 @@ on right click:
 	remove {_tool} from player's inventory
 	stop
 on load:
+	
 	set {item::1} to totem of undying
 	set {item::2} to potion of invisibility named "透明化" with lore "30seconds tier未指定" and "体に刺さった矢が消える"
 	set {item::3} to potion of leaping named "跳躍力" with lore "30seconds tier15"
@@ -353,8 +370,10 @@ on load:
 	set {item::21} to 2 prismarine shard named "操弾" with lore "右クリックで操弾のトライデントが飛ぶ"
 	set {item::22} to ender eye named "パラノイヤ(笑)" with lore "somの魔法職が使う魔法の一つ" and "§f周囲のプレイヤーの視点をランダムな方向に向けちゃう！%nl%§f発動回数15%nl%§f発動間隔0.5秒%nl%§f半径10"
 	set {item::23} to tnt named "即死地雷" with lore "拾った人は死ぬ%nl%だれであろうともしぬ"
+	set {item::24} to red stained glass pane named "収縮" with lore "30秒くらいかけてボーダーが15mくらいに収縮します" 
+	set {item::25} to pointed dripstone named "Super Gummy Sharknado Jesus" with lore "オフハンドに持ってるとき発動%nl%自分の撃った矢を相手が拾った時にダメージ"
 	set {item::5143150} to rose bush named "こいしちゃん最高！"
-	set {item::a} to 23
+	set {item::a} to 25 
 #	add potion effect of night vision of tier 5 for 6 seconds to potion effects of {item::14}
 	add potion effect of darkness of tier 1 for 3 seconds to potion effects of {item::14}
 	add potion effect of resistance of tier 5 for 4 seconds to potion effects of {item::14}
@@ -422,6 +441,7 @@ on inventory click:
 	event-inventory is not player's inventory
 	name of event-inventory is not "能力使用対象を選択" 
 	name of event-inventory is not "アイテムを選べ！"
+	name of event-inventory is not "投票先を選ぼう！"
 	event-slot is not empty
 	wait 1 tick
 	give event-item to the player
@@ -459,8 +479,11 @@ function kyoyuis() :: text:
 		add loop-value to {_a::*}
 	return "%{_a::*}%"
 on arrow pickup:
-    cancel the event
-    
+	cancel event
+	if metadata value "item25" of event-projectile is true:
+		stop if player is shooter of event-projectile
+		damage player by 2.5 heart
+		delete event-projectile
 on join:
 	set {player} to real online player count
 	{ingame} is true
@@ -502,6 +525,7 @@ on player pick up of arrow:
 	loop 6 time:
 		event-item's name is name of {item::7::%loop-number%}
 		set {_type} to name of {item::7::%loop-number%}
+	{_type} is set
 	cancel event
 	make {_dropped} appear from all players
 	delete event-dropped item
@@ -536,8 +560,7 @@ on player pick up of arrow:
 		clear {item::7::5::%player%}
 		clear {item::7::5::%player%::0}
 	if {_type} is name of {item::7::6}:
-		strike lightning effect at the player
-		create a safe explosion of force 1 at the player
+		strike lightning at the player
 
 on pickup of tnt:
 	kill the player
@@ -589,6 +612,10 @@ on projectile collide:
 		clear {rope.%event-entity%}
 		stop
 	clear {rope.%event-entity%}
+on shoot:
+	projectile is an arrow
+	shooter's offhand tool is {item::25}
+	set metadata value "item25" of projectile to true
 on kick:
 	cancel event
 On Projectile Hit :
@@ -648,7 +675,13 @@ on right click:
 		{stop} or {stopvp} is true
 		stop loop
 	clear {item::7::0::%player%}
-	
+
+on right click:
+	event-item is {item::5143150}
+	cancel event
+	remove event-item from player's inventory
+	loop 51 time:
+		make the player say "こいしちゃん最高！！！！！"
 on right click:
 	event-item is {item::14}
 	cancel event
@@ -707,10 +740,10 @@ on right click:
 	cancel event
 	remove event-item from player's inventory
 	loop 15 time:
+		wait 0.5 seconds
 		loop all players in radius 10 meters of player:
 			loop-player is not player
 			command "/execute as %loop-player% at @s run tp @s ~ ~ ~ %random integer from -180 to 180% %random integer from -90 to 90%"
-		wait 0.5 seconds
 	
 on click:
 	player's tool is compass
