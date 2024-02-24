@@ -343,7 +343,6 @@ on right click:
 	remove {_tool} from player's inventory
 	stop
 on load:
-	
 	set {item::1} to totem of undying
 	set {item::2} to potion of invisibility named "透明化" with lore "30seconds tier未指定" and "体に刺さった矢が消える"
 	set {item::3} to potion of leaping named "跳躍力" with lore "30seconds tier15"
@@ -376,7 +375,8 @@ on load:
 	set {item::22} to ender eye named "パラノイヤ(笑)" with lore "somの魔法職が使う魔法の一つ" and "§f周囲のプレイヤーの視点をランダムな方向に向けちゃう！%nl%§f発動回数15%nl%§f発動間隔0.5秒%nl%§f半径10"
 	set {item::23} to tnt named "即死地雷" with lore "拾った人は死ぬ%nl%だれであろうともしぬ"
 	set {item::24} to red stained glass pane named "収縮" with lore "30秒くらいかけてボーダーが15mくらいに収縮します" 
-	set {item::25} to pointed dripstone named "Super Gummy Sharknado Jesus" with lore "オフハンドに持ってるとき発動%nl%自分の撃った矢を相手が拾った時にダメージ"
+	set {item::25} to pointed dripstone named "棘弾" with lore "オフハンドに持ってるとき発動%nl%自分の撃った矢を相手が拾った時にダメージ"
+	set {item::26} to slime block named "跳弾" with lore "オフハンドに持ってるとき発動%nl%"
 	set {item::5143150} to rose bush named "こいしちゃん最高！"
 	set {item::a} to 25 
 #	add potion effect of night vision of tier 5 for 6 seconds to potion effects of {item::14}
@@ -478,6 +478,14 @@ function blackis() :: text:
 		{role.%loop-value%} contains "§b"
 		add loop-value to {_a::*}
 	return "%{_a::*}%"
+on projectile hit:
+	if metadata value "item26" of event-projectile is true:
+		victim is not set
+		cancel event
+		set {_p} to event-projectile
+		set {_p}'s velocity to {_v}
+		set {_v} to {_v}*-1
+		push {_p} {_v} at speed 1
 function kyoyuis() :: text:
 	loop {player::*}:
 		{role.%loop-value%} is {rolelist::9}
@@ -618,6 +626,10 @@ on projectile collide:
 		clear {rope.%event-entity%}
 		stop
 	clear {rope.%event-entity%}
+on shoot:
+	projectile is an arrow
+	shooter's offhand tool is {item::26}
+	set metadata value "item26" of projectile to true
 on shoot:
 	projectile is an arrow
 	shooter's offhand tool is {item::25}
