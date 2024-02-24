@@ -5,7 +5,7 @@ on rightclick on a mangrove button:
 	button(player, {votetime})
 function button(p: player ,time: number):
 	if {nowvote} is true:
-		send "すでに投票時間です！" to {_p}
+		send "すでに投票時間またはボタンクールタイムです！" to {_p}
 		stop
 	set {nowvote} to true
 	set {_loc} to {_p}'s location
@@ -21,7 +21,7 @@ function button(p: player ,time: number):
 	give {item::vote} to all players
 	make all players invulnerable
 	loop {votetime}*20 time:
-		send title " " with subtitle "%round({votetime}*20 - loop-number, 0)%" to all players with fadein 0 second
+		send title " " with subtitle "%round({votetime} - loop-number/20, 0)%" to all players with fadein 0 second
 		wait 1 tick
 		stop loop if {stop} is true
 	remove all {item::vote} from  inventory of all players
@@ -34,23 +34,25 @@ function button(p: player ,time: number):
 		{_v::%name of loop-player%} is set
 		broadcast "%name of loop-player%：%{_v::%name of loop-player%}%"
 	set {_aga::*} to last 2 elements of sorted {_v::*}
-	broadcast "%{_aga::*}%"
 	if {_aga::1} is not {_aga::2}:
-		set {_v::*} to sorted {_v::*}
-		set {_takusan} to last element of indices of {_v::*}
+		loop {_v::*}:
+
+			loop-value is {_aga::2}
+			set {_takusan} to loop-index
 		set {_takusan} to {_takusan} parsed as player
-		kill {_takusan}
-		set {_split::*} to split "%{_takusan}%が処刑された。" by ""
-		loop {_split::*}:
-			add loop-value to {_naiyou}
-			send title "%{_naiyou}%" to all players
-			wait 0.1 second
+		command "/kill %{_takusan}%"
+		send title " " with subtitle "%{_takusan}%が処刑された" to all players
+	close inventory for all players
+
 	wait 5 seconds
 	
 	make all players vulnerable
 	loop all players:
 		clear {v.%loop-player%}
 		teleport loop-player to {_loc.%loop-player%} 
+	loop {votetime}*20 time:
+		wait 1 tick
+		stop loop if {stop} is true
 	clear {nowvote} 
 on right click:
 	set {_tool} to player's tool
@@ -71,7 +73,7 @@ on inventory click:
 	set {v.%player%} to name of event-item
 	send "%{v.%player%}%に投票してみました"
 	wait 1 tick
-	close player's inventory
+	close inventory for players
 command /setting-vote <text> <number=60>:
 	trigger:
 		if arg-1 is "time":

@@ -227,7 +227,7 @@ on right click:
 	player's tool is prismarine shard
 	cancel event
 	remove 1 prismarine shard from player's inventory
-	loop 3 time:
+	loop 6 time:
 		trident(player)
 		
 function trident(p: player):
@@ -238,7 +238,7 @@ function trident(p: player):
 	set glowing of {_t} to true
 	while {_t} is alive:
 		teleport {_t} to location of {_t}
-		push {_t} in the direction of {_p} at speed 0.5
+		push {_t} in the direction of {_p} at speed 1
 		wait 1 tick
 		
 on shoot:
@@ -289,6 +289,7 @@ on right click:
 	loop 30*20 time:
 		set border center of world border of world "%world of player%" to location of player
 		wait 1 tick
+		stop loop if player's gamemode is spectator
 		{stop} or {stopvp} is true
 		stop loop
 	wait 5 second
