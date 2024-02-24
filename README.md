@@ -1,6 +1,7 @@
 # 人狼について
 IP：**ev.pnkt.f5.si**<br>
-バージョン：**1.19以降推奨** ~~1.16.5だいすき~~<br>
+動作バージョン：**1.19.4** ~~1.16.5だいすき~~<br>
+addon: Skbee diskuise
 役職説明：<br>
 https://www.youtube.com/watch?v=D6eDxl2MRRY<br>
 <br>
