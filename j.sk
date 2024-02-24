@@ -112,7 +112,8 @@ command /setting <text> <integer=0>:
 command /start:
 	permission: skript.admin
 	trigger:
-		expand world border of world "world" to 10000 in 1 seconds
+		clear {nowvote}
+		expand world border of world "%world of player%" to 10000 in 1 seconds
 		clear {item::17::*}
 		command "/team join nametagkiero @a"
 		command "/scoreboard objectives setdisplay list"
@@ -282,17 +283,17 @@ on right click:
 	{_tool} is {item::24}
 	cancel event
 	remove event-item from player's inventory
-	set warning distance of world border of world "world" to 150
-	shrink world border of world "world" to 150 in 1 tick
-	shrink world border of world "world" to 15 in 30 seconds
+	set warning distance of world border of world "%world of player%" to 150
+	shrink world border of world "%world of player%" to 150 in 1 tick
+	shrink world border of world "%world of player%" to 15 in 30 seconds
 	loop 30*20 time:
-		set border center of world border of world "world" to location of player
+		set border center of world border of world "%world of player%" to location of player
 		wait 1 tick
 		{stop} or {stopvp} is true
 		stop loop
 	wait 5 second
-	expand world border of world "world" to 10000 in 30 seconds
-	set warning distance of world border of world "world" to 1
+	expand world border of world "%world of player%" to 10000 in 30 seconds
+	set warning distance of world border of world "%world of player%" to 1
 	
 on right click:
 	set {_tool} to player's tool
@@ -302,6 +303,7 @@ on right click:
 	loop all players:
 		loop blocks in radius 15 around {_loc}:
 			loop-block is not air
+			loop-block is not light
 			loop-block is not {_loc}
 			make loop-player see loop-block as air
 			make player see loop-block as glass
@@ -310,6 +312,8 @@ on right click:
 	loop all players:
 		loop blocks in radius 15 around {_loc}:
 			loop-block is not air
+			loop-block is not light
+
 			make loop-player see loop-block as loop-block
 	stop
 on right click:
@@ -346,13 +350,13 @@ on load:
 	set {item::4::time} to 10
 	set {item::5} to shield named "脆い盾"
 	set {item::6} to splash potion named "shine！" with lore "即死ポーションだよ" 
-	set {item::7} to arrow named "トラップ" with lore "クリックで種類を指定して取り出せる%nl%取り出して出きたたやつを右クリックで設置%nl%[tips]重ねて置くと効果時間が伸びたり複数同時にデバフ与えれる"
-	set {item::7::1} to arrow named "トラップ(盲目)" with lore "右クリックで設置%nl%使用者以外が回収すると盲目(15秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
-	set {item::7::2} to arrow named "トラップ(消失)" with lore "右クリックで設置%nl%使用者以外が回収すると地形消失(15秒,半径10)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
-	set {item::7::3} to arrow named "トラップ(拘束)" with lore "右クリックで設置%nl%使用者以外が回収すると鈍足(20秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 		
-	set {item::7::4} to arrow named "トラップ(発光)" with lore "右クリックで設置%nl%使用者以外が回収すると発光(10秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
-	set {item::7::5} to arrow named "トラップ(偏執)" with lore "右クリックで設置%nl%使用者以外が回収すると視点変化(10回,10秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
-	set {item::7::6} to arrow named "トラップ(落雷)" with lore "右クリックで設置%nl%使用者以外が回収すると雷どーん！(1回)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 
+	set {item::7} to blaze rod named "トラップ" with lore "クリックで種類を指定して取り出せる%nl%取り出して出きたたやつを右クリックで設置%nl%[tips]重ねて置くと効果時間が伸びたり複数同時にデバフ与えれる"
+	set {item::7::1} to blaze rod named "トラップ(盲目)" with lore "右クリックで設置%nl%使用者以外が回収すると盲目(15秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::2} to blaze rod named "トラップ(消失)" with lore "右クリックで設置%nl%使用者以外が回収すると地形消失(15秒,半径10)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::3} to blaze rod named "トラップ(拘束)" with lore "右クリックで設置%nl%使用者以外が回収すると鈍足(20秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 		
+	set {item::7::4} to blaze rod named "トラップ(発光)" with lore "右クリックで設置%nl%使用者以外が回収すると発光(10秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::5} to blaze rod named "トラップ(偏執)" with lore "右クリックで設置%nl%使用者以外が回収すると視点変化(10回,10秒)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 	
+	set {item::7::6} to blaze rod named "トラップ(落雷)" with lore "右クリックで設置%nl%使用者以外が回収すると雷どーん！(1回)%nl%使用者は回収不可%nl%発動対象は踏んだやつ単体" 
 	set {item::8} to potion of speed named "敏敏" with lore "30seconds tier15"
 	set {item::9} to barrier named "地形消失" with lore "15m以内のプレイヤーに10秒間独特な移動阻害を与える"
 	set {item::10} to spectral arrow named "分身" with lore "他プレイヤーに攻撃をする分身を出します 16秒で死にます"
@@ -500,7 +504,7 @@ on player pick up of player skull:
 on quit:
 	wait 5 tick
 	set {player} to real online player count
-on rightclick using a arrow:
+on rightclick using a blaze rod:
 	loop 7 time:
 		event-item's name is name of {item::7::%loop-number%}
 		set {_a} to true
@@ -517,7 +521,7 @@ on rightclick using a arrow:
 		make {_dropped} disappear from loop-player 
 	
 
-on player pick up of arrow:
+on player pick up of blaze rod:
 	cancel event if event-item is 0 air
 	if {item::7::1::%player%::*} contains event-item:
 		cancel event
@@ -537,6 +541,7 @@ on player pick up of arrow:
 		set {_loc} to player's location
 		loop blocks in radius 5 around {_loc}:
 			loop-block is not air
+			loop-block is not light
 			loop-block is not {_loc}
 			make player see loop-block as air
 		wait 15 second
@@ -745,16 +750,11 @@ on right click:
 			loop-player is not player
 			command "/execute as %loop-player% at @s run tp @s ~ ~ ~ %random integer from -180 to 180% %random integer from -90 to 90%"
 	
-on click:
-	player's tool is compass
-	{compass.%player%} is not true
-	player command "/tool unbind"
-	set {compass.%player%} to true
+
 on item damage:
 	event-item is elytra
 	increase the damage by 39
-on click on a chest or dropper or dispenser or furnace:
-	cancel event
-	wait 2 tick
-	close the inventory view for player
-	
+on rightclick on a chest or dropper or dispenser or furnace or trapped chest or barrel:
+	gamemode of player is adventure
+	cancel event	
+on inventory open:
