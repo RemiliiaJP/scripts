@@ -66,7 +66,7 @@ on damage by arrow:
 	set damage to 30
 	
 function item_select(p: player):
-	set {_gui} to chest inventory with 3 rows named "アイテムを選べ！"
+	set {_gui} to chest inventory with 4 rows named "アイテムを選べ！"
 	loop {item::a} time:
 		set slot loop-number - 1 of {_gui} to {item::%loop-number%}
 	open {_gui} to {_p}
