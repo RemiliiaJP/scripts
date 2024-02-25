@@ -217,7 +217,7 @@ function gmend(winner :text):
 		clear {item::7::5::%loop-player%::0}
 		set the loop-player's tab list name to name of loop-player
 		play sound "entity.wither.spawn" with pitch 0.5 to the loop-player
-	wait 3 tick
+	wait 20 tick
 	clear {stop}
 	clear {stopvp}
 on item damage:
@@ -229,24 +229,6 @@ on right click:
 	remove 1 prismarine shard from player's inventory
 	loop 6 time:
 		trident(player)
-on right click:
-	player's tool is {item::26}
-	cancel event
-	remove {item::26} from player's inventory
-	make the player shoot a arrow at speed 5
-	set {_a} to last shot arrow
-	set gravity of {_a} to off
-	set {_loc} to player's location
-	make player invulnerable
-	loop 3*20 time: 
-		create a fake explosion at {_a}
-		loop all players in radius 3 of {_a}:
-			kill loop-player
-		teleport {_a} 1 meters in player's facing {_a}'s location
-		teleport player to {_loc}
-		wait 1 tick
-	make player vulnerable
-	kill {_a}
 function trident(p: player):
 	play sound "item.trident.throw" to {_p}
 	make {_p} shoot a trident at speed 5
@@ -393,7 +375,6 @@ on load:
 	set {item::23} to tnt named "即死地雷" with lore "拾った人は死ぬ%nl%だれであろうともしぬ"
 	set {item::24} to red stained glass pane named "収縮" with lore "30秒くらいかけてボーダーが15mくらいに収縮します" 
 	set {item::25} to pointed dripstone named "棘弾" with lore "オフハンドに持ってるとき発動%nl%自分の撃った矢を相手が拾った時にダメージ"
-	set {item::26} to red candle named "貫通弾" with lore "び～～～～む！！"
 	set {item::5143150} to rose bush named "こいしちゃん最高！"
 	set {item::a} to 25 
 #	add potion effect of night vision of tier 5 for 6 seconds to potion effects of {item::14}
