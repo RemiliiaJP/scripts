@@ -240,11 +240,10 @@ function trident(p: player):
 		push {_t} in the direction of {_p} at speed 1
 		wait 1 tick
 		
+on player ready arrow:
+	cancel event if selected arrow is spectral arrow
+	cancel event if selected arrow is tipped arrow
 on shoot:
-	if event-projectile is spectral arrow:
-		shooter's tool is not crossbow
-		cancel event
-	cancel event if event-projectile is tipped arrow
 	cancel event if shooter's gamemode is spectator
 	projectile is an arrow
 	remove all arrow from shooter's inventory

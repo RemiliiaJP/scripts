@@ -53,12 +53,12 @@ function button(p: player ,time: number):
 	loop all players:
 		clear {v.%loop-player%}
 		teleport loop-player to {_loc.%loop-player%} 
+	wait 3 second	
+	make all players vulnerable
 	loop {votetime}*20 time:
 		wait 1 tick
 		stop loop if {stop} is true
 	clear {nowvote} 
-	wait 3 second	
-	make all players vulnerable
 on right click:
 	set {_tool} to player's tool
 	{_tool} is {item::vote}
