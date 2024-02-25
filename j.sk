@@ -342,6 +342,7 @@ on right click:
 	remove {_tool} from player's inventory
 	stop
 on load:
+	clear {item::*}
 	set {item::1} to totem of undying
 	set {item::2} to potion of invisibility named "透明化" with lore "30seconds tier未指定" and "体に刺さった矢が消える"
 	set {item::3} to potion of leaping named "跳躍力" with lore "30seconds tier15"

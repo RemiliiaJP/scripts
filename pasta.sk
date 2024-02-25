@@ -23,5 +23,5 @@ on right click:
 on swap hand item:
 	event-player's tool is {pasta::2}
 	do while event-player's offhand tool is {pasta::2}:
-		add potion effect of regeneration of tier 3 for 2 tick to potion effects of event-player
-		wait 1 tick
+		add potion effect of regeneration of tier 3 for 5 second to potion effects of event-player
+		wait 5 second
