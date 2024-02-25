@@ -50,7 +50,7 @@ function button(p: player ,time: number):
 	close inventory for all players
 
 	wait 5 seconds
-		loop all players:
+	loop all players:
 		clear {v.%loop-player%}
 		teleport loop-player to {_loc.%loop-player%} 
 	loop {votetime}*20 time:
