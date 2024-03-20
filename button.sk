@@ -80,6 +80,7 @@ on inventory click:
 	wait 1 tick
 	close inventory for player
 command /setting-vote <text> <number=60>:
+	permission: op
 	trigger:
 		if arg-1 is "time":
 			set {votetime} to arg-2
@@ -88,13 +89,3 @@ on tab complete of "/setting-vote":
 	set tab completions for position 1 to "time"
 on drop:
 	cancel event if event-item is {item::vote}
-command /testing <number> <number> <number>:
-	trigger:
-		set {_list::1} to arg-1
-		set {_list::2} to arg-2
-		set {_list::3} to arg-3
-		loop {_list::*}:
-			send "%loop-value%"
-		send "こっからそーと"
-		loop sorted {_list::*}:
-			send "%loop-value%"

@@ -203,9 +203,6 @@ every 10 second:
 	set {_objective} to objective with id "ping"
 	loop all players:
 		set score of loop-player for {_objective} to ping of loop-player
-command /send <player>:
-	trigger:
-		connect arg to "lobby"
 on join:
 	{pvp::ingame} is true
 	{player::*} do not contain player
