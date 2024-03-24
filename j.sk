@@ -122,6 +122,7 @@ command /setting <text> <integer=0>:
 		set score of {rolelist::9} for {_objective} to {role.kyoyu}
 		set score of {rolelist::10} for {_objective} to {role.tan}
 		set score of {rolelist::12} for {_objective} to {role.kaito}
+		set score of {rolelist::14} for {_objective} to {role.shuffle}
 		set score of {rolelist::2} for {_objective} to {player}-{role.black}-{role.yogen}-{role.knight}-{role.madman}-{role.wwolf}-{role.kyoyu}-{role.tan}-{role.kaito}
 command /start:
 	permission: skript.admin
