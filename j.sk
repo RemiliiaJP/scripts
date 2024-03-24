@@ -22,7 +22,7 @@ on death of player:
 #		remove 1 from {role.black.aaa}
 function recaliculate():
 	loop {player::*}:
-		gamemode of loop-value is not "spectator"
+		loop-value's gamemode is not spectator
 		add 1 to {role.white.aaa} if {role.%loop-value%} contains "§w"
 		add 1 to {role.black.aaa} if {role.%loop-value%} contains "§b"
 function giverole(n: number):
