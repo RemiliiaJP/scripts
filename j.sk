@@ -465,7 +465,7 @@ on inventory click:
 	give event-item to the player
 	close the inventory view for player
 on tab complete of "/setting":
-	set tab completions for position 1 to "人狼", "予言者", "騎士", "狂人", "白狼", "共有者", "探偵", "怪盗",　"ギャンブラー", "ArrowCoolTime" and "ArrowDamage"
+	set tab completions for position 1 to "人狼", "予言者", "騎士", "狂人", "白狼", "共有者", "探偵", "怪盗", "ギャンブラー", "ArrowCoolTime" and "ArrowDamage"
 	set tab completions for position 2 to "任意の数字を入力" and "人狼と白陣営の役職が1以上 村人が0以上になるようにしてください"
 	
 on quit:
