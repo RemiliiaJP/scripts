@@ -16,16 +16,20 @@ on death of player:
 	set victim's gamemode to spectator 
 	cancel event
 	drop victim's skull named "%victim%"
-	if {role.%victim%} contains "§w":
-		remove 1 from {role.white.aaa}
-	if {role.%victim%} contains "§b":
-		remove 1 from {role.black.aaa}
+#	if {role.%victim%} contains "§w":
+#		remove 1 from {role.white.aaa}
+#	if {role.%victim%} contains "§b":
+#		remove 1 from {role.black.aaa}
+function recaliculate():
+	loop {player::*}:
+		gamemode of loop-value is not "spectator"
+		add 1 to {role.white.aaa} if {role.%victim%} contains "§w"
+		add 1 to {role.black.aaa} if {role.%victim%} contains "§b"
 function giverole(n: number):
 	set {player::*} to shuffled {player::*}
-	if {ingame} is not true:
-		set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito}+{role.madman}+{role.shuffle})
-		set {role.white.aaa} to {role.white}
-		set {role.black.aaa} to {role.black}+{role.wwolf}+{role.kaito}
+	set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito}+{role.madman}+{role.shuffle})
+	set {role.white.aaa} to {role.white}
+	set {role.black.aaa} to {role.black}+{role.wwolf}+{role.kaito}
 	loop {player::*}:
 		set {_P} to loop-value
 		set {role.%{_P}%} to {rolelist::2}
@@ -167,6 +171,7 @@ command /start:
 		set {ingame} to true
 		set bar visibility of {_bar} to true
 		loop 12000 time:
+			recaliculate()
 			set {_time} to (12000-loop-number)/20
 			set {_time} to round({_time} ,0)
 			set bar title of {_bar} to "残り時間 %{_time}%"
@@ -471,24 +476,23 @@ on tab complete of "/setting":
 	set tab completions for position 1 to "人狼", "予言者", "騎士", "狂人", "白狼", "共有者", "探偵", "怪盗", "ギャンブラー", "ArrowCoolTime" and "ArrowDamage"
 	set tab completions for position 2 to "任意の数字を入力" and "人狼と白陣営の役職が1以上 村人が0以上になるようにしてください"
 	
-on quit:
-	player's gamemode is adventure
-	{ingame} is true
-	set {_P} to player
-	if {role.%{_P}%} contains "§w":
-		remove 1 from {role.white.aaa}
-	if {role.%{_P}%} contains "§b":
-		remove 1 from {role.black.aaa}
-	while player is offline:
-		wait 1 tick
-		{stop} is true
-		stop
-	wait 1 tick
-	player is online
-	if {role.%{_P}%} contains "§w":
-		add 1 to {role.white.aaa}
-	if {role.%{_P}%} contains "§b":
-		add 1 to {role.black.aaa}
+#on quit:
+#	player's gamemode is adventure
+#	{ingame} is true
+#	set {_P} to player
+#	if {role.%{_P}%} contains "§w":
+#		remove 1 from {role.white.aaa}
+#	if {role.%{_P}%} contains "§b":
+#		remove 1 from {role.black.aaa}
+#	while player is offline:
+#		wait 1 tick
+#		{stop} is true
+#		stop
+#	wait 1 tick
+#	player is online
+#	if {role.%{_P}%} contains "§w":
+#		add 1 to {role.white.aaa}
+#		add 1 to {role.black.aaa}
 function blackis() :: text:
 	loop {player::*}:
 		{role.%loop-value%} contains "§b"
