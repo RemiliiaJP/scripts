@@ -61,6 +61,13 @@ function giverole(n: number):
 		set {_P} to {player::%{_aho}%}
 		set {role.%{_P}%} to {rolelist::12}
 	set {role.white.aaa} to {role.white.aaa}-{role.madman}
+	set {_P} to loop-value
+	loop {player::*}:
+		send "あなたは%{role.%{_P}%}%です" to loop-value
+		if {role.%{_P}%} is {rolelist::1} or {rolelist::8}:
+			send "仲間は %blackis()%" to loop-value
+		if {role.%{_P}%} is {rolelist::9}:
+			send "仲間は %kyoyuis()%" to loop-value
 	
 command /setting <text> <integer=0>:
 	permission: skript.admin
@@ -148,13 +155,6 @@ command /start:
 		set {_bar} to boss bar with id "timer" with title "残り時間 12000" with color white with progress 50
 		wait 1 tick
 		clear {stop}
-		loop {player::*}:
-			set {_P} to loop-value
-			send "あなたは%{role.%{_P}%}%です" to loop-value
-			if {role.%{_P}%} is {rolelist::1} or {rolelist::8}:
-				send "仲間は %blackis()%" to loop-value
-			if {role.%{_P}%} is {rolelist::9}:
-				send "仲間は %kyoyuis()%" to loop-value
 		set {ingame} to true
 		set bar visibility of {_bar} to true
 		loop 12000 time:
