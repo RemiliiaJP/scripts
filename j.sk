@@ -63,7 +63,8 @@ function giverole(n: number):
 	loop {role.shuffle} time:
 		add 1 to {_aho}
 		set {_P} to {player::%{_aho}%}
-		set {role.%{_P}%} to {rolelist::14}
+		set {role.%{_P}%} to {rolelist::14} if {ingame} is not true
+		set {role.%{_P}%} to {rolelist::7} if {ingame} is true
 	loop {player::*}:
 		set {_P} to loop-value
 		send "あなたは%{role.%{_P}%}%です" to loop-value
