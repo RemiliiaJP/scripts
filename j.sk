@@ -22,7 +22,7 @@ on death of player:
 		remove 1 from {role.black.aaa}
 function giverole(n: number):
 	set {player::*} to shuffled {player::*}
-	set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito})
+	set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito}+{role.madman}+{role.shuffle})
 	set {role.white.aaa} to {role.white}
 	set {role.black.aaa} to {role.black}+{role.wwolf}+{role.kaito}
 	loop {player::*}:
@@ -60,7 +60,10 @@ function giverole(n: number):
 		add 1 to {_aho}
 		set {_P} to {player::%{_aho}%}
 		set {role.%{_P}%} to {rolelist::12}
-		set {role.white.aaa} to {role.white.aaa}-{role.madman}
+	loop {role.shuffle} time:
+		add 1 to {_aho}
+		set {_P} to {player::%{_aho}%}
+		set {role.%{_P}%} to {rolelist::14}
 	loop {player::*}:
 		set {_P} to loop-value
 		send "あなたは%{role.%{_P}%}%です" to loop-value
@@ -105,6 +108,9 @@ command /setting <text> <integer=0>:
 		if arg-1 is "怪盗":
 			set {role.kaito} to arg-2
 			broadcast "怪盗数を%arg-2%に設定"
+		if arg-1 is "ギャンブラー":
+			set {role.shuffle} to arg-2
+			broadcast "ギャンブラー数を%arg-2%に設定"
 		
 		set {_objective} to objective with id "test"
 		set score of {rolelist::1} for {_objective} to {role.black}
@@ -264,6 +270,13 @@ on right click:
 	if {role.%player%} is {rolelist::9}:
 		send "[杖]仲間は %kyoyuis()%" to player
 		stop
+	if {role.%player%} is {rolelist::14}:
+		send title "ギャンブラーが能力を発動しました" to all players
+		send "" to all players
+		loop {player::*}:
+			add 1 to {_P}
+		giverole({_P})
+		stop
 	abilitymenu(player)
 	stop
 on right click:
@@ -399,6 +412,8 @@ on load:
 	set {rolelist::11} to "§w探偵[使用済み]§r"
 	set {rolelist::12} to "§b怪盗§r"
 	set {rolelist::13} to "§b怪盗[使用済み]§r"
+	set {rolelist::14} to "§dギャンブラー§r"
+
 function trapmenu(p: player):
 	set {_gui} to chest inventory with 1 rows named "トラップの種類を選択"
 	loop {item::7::*}:
@@ -450,7 +465,7 @@ on inventory click:
 	give event-item to the player
 	close the inventory view for player
 on tab complete of "/setting":
-	set tab completions for position 1 to "人狼", "予言者", "騎士", "狂人", "白狼", "共有者", "探偵", "怪盗", "ArrowCoolTime" and "ArrowDamage"
+	set tab completions for position 1 to "人狼", "予言者", "騎士", "狂人", "白狼", "共有者", "探偵", "怪盗",　"ギャンブラー", "ArrowCoolTime" and "ArrowDamage"
 	set tab completions for position 2 to "任意の数字を入力" and "人狼と白陣営の役職が1以上 村人が0以上になるようにしてください"
 	
 on quit:
