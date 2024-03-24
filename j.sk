@@ -21,6 +21,8 @@ on death of player:
 #	if {role.%victim%} contains "§b":
 #		remove 1 from {role.black.aaa}
 function recaliculate():
+	set {role.white.aaa} to 0
+	set {role.black.aaa} to 0
 	loop {player::*}:
 		loop-value's gamemode is not spectator
 		add 1 to {role.white.aaa} if {role.%loop-value%} contains "§w"
