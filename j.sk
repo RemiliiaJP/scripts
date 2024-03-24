@@ -22,9 +22,10 @@ on death of player:
 		remove 1 from {role.black.aaa}
 function giverole(n: number):
 	set {player::*} to shuffled {player::*}
-	set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito}+{role.madman}+{role.shuffle})
-	set {role.white.aaa} to {role.white}
-	set {role.black.aaa} to {role.black}+{role.wwolf}+{role.kaito}
+	if {ingame} is not true:
+		set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito}+{role.madman}+{role.shuffle})
+		set {role.white.aaa} to {role.white}
+		set {role.black.aaa} to {role.black}+{role.wwolf}+{role.kaito}
 	loop {player::*}:
 		set {_P} to loop-value
 		set {role.%{_P}%} to {rolelist::2}
