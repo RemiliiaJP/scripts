@@ -23,8 +23,8 @@ on death of player:
 function recaliculate():
 	loop {player::*}:
 		gamemode of loop-value is not "spectator"
-		add 1 to {role.white.aaa} if {role.%victim%} contains "§w"
-		add 1 to {role.black.aaa} if {role.%victim%} contains "§b"
+		add 1 to {role.white.aaa} if {role.%loop-value%} contains "§w"
+		add 1 to {role.black.aaa} if {role.%loop-value%} contains "§b"
 function giverole(n: number):
 	set {player::*} to shuffled {player::*}
 	set {role.white} to {_n}-({role.black}+{role.wwolf}+{role.kaito}+{role.madman}+{role.shuffle})
