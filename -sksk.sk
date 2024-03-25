@@ -1,4 +1,4 @@
 on damage of player:
-	name of victim is "kouta1212"
+	name of victim is "bolt_"
 	wait 1 tick
 	set victim's invulnerability ticks to 0

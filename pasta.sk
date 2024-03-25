@@ -20,8 +20,10 @@ on right click:
 	send "発動！" to player
 	kill player
 #2種類目のオフハンドに持ってるとき常時発動の例
-on swap hand item:
-	event-player's tool is {pasta::2}
-	do while event-player's offhand tool is {pasta::2}:
-		knock event-player (vector from event-player to event-player) with strength 1
+every 1 tick:
+	loop all players:
+		loop-player's gamemode is not spectator
+		loop-player's offhand tool is {pasta::2}
+		knock loop-player (random vector) with strength 1
+		push loop-player downwards at speed 0.06
 		wait 1 tick
