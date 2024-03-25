@@ -3,8 +3,9 @@ on death of player:
 	{ingame} is true
 	victim's gamemode is not spectator
 	if victim's tool or victim's offhand tool is totem of undying:
-		apply potion of blindness without any particles to attacker for 5 seconds
 		remove 1 totem of undying from victim
+		wait 1 tick
+		apply 
 		stop
 	loop {knight::*}:
 		loop-value is name of victim
@@ -462,14 +463,14 @@ on inventory click:
 		set {role.%{_P}%} to {rolelist::6}
 	if {role.%{_P}%} is {rolelist::12}:
 		set {_temp} to name of event-item parsed as player
-		wait 2 tick
-		open {_temp}'s inventory to the player
-		set  {role.%{_P}%} to {rolelist::13}
+		loop 36 time:
+			set {_gui} to chest inventory with 6 rows named "能力使用対象を選択"
+			set slot loop-counter - 1 of {_gui} to slot loop-number - 1 of {_temp}
+		open {_gui} to {_P}
+		set {role.%{_P}%} to {rolelist::13}
 on inventory click:
 	event-inventory is not player's inventory
-	name of event-inventory is not "能力使用対象を選択" 
-	name of event-inventory is not "アイテムを選べ！"
-	name of event-inventory is not "投票先を選ぼう！"
+	name of event-inventory is "アイテム盗んじゃおう！" 
 	event-slot is not empty
 	wait 1 tick
 	give event-item to the player

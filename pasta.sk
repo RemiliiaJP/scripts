@@ -4,8 +4,8 @@ on load:
 #アイテムを登録
 #pastaのところは好きな文字列でいいです(被らないようにはしてほしい)
 #数字のところは別に数字じゃなくてもいいと思いますけど被ったら当然後の方に上書きされます
-	set {pasta::1} to アイテムの種類 named "名前" with lore "説明(50%伝われば雑でok)"
-	set {pasta::2} to heart of the sea named "BHOPの例" with lore "オフハンドに持っている間発動%nl%えぐい動きをできます"
+	set {_pasta::1} to アイテムの種類 named "名前" with lore "説明(50%伝われば雑でok)"
+	set {_pasta::2} to heart of the sea named "BHOPの例" with lore "オフハンドに持っている間発動%nl%えぐい動きをできます"
 #item(実際に私のゲームに使われている変数)に移します
 	add {pasta::*} to {item::*}
 #登録したいアイテムの数(今回は2)を追加します
