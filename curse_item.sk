@@ -1,0 +1,37 @@
+on load:
+    # ロードされるまで待つ
+	wait 1 tick
+    # アイテムを登録
+	set {curse-item} to book of unbreaking 1 named "&b呪詛の本" with lore "&eプレイヤーに呪詛を与えるができます", "&8盲目 - 8秒", "&2毒 (Tier 3) - 15秒" and "&7移動速度低下 (Tier 3) - 25秒"
+    # item(実際に私のゲームに使われている変数)に移します
+	add {curse-item} to {item::*}
+    # 登録したいアイテムの数(今回は1)を追加します
+	add 1 to {item::a}
+
+on right click:
+    player's tool is {curse-item}
+    cancel event
+    openCurse(player)
+
+on inventory click:
+	name of event-inventory is "呪詛使用対象を選択"
+	cancel event
+	event-inventory is not player's inventory
+	event-slot is not empty
+	set {_target} to event-item's name parsed as player
+	if {_target} is player:
+		send "§c[呪詛] それはお前だが？" to player
+		stop
+	apply potion of slowness of tier 3 without any particles to {_target} for 25 seconds
+	apply potion of poison of tier 3 without any particles to {_target} for 15 seconds
+	apply potion of blindness without any particles to {_target} for 8 seconds
+	send "&c[呪詛] お前は呪詛を%player%にかけられた！ &e&lおめでとう！" to {_target}
+	send "&c[呪詛] %{_target}%に呪詛をかけた！" to player
+	remove {curse-item} from player's inventory
+	close inventory for player
+
+function openCurse(p: player):
+	set {_gui} to chest inventory with 6 rows named "呪詛使用対象を選択"
+	loop {player::*}:
+		set slot loop-counter - 1 of {_gui} to loop-value's skull named "%loop-value%"
+	open {_gui} to {_p}
