@@ -14,7 +14,7 @@ on right click:
     openCurse(player)
 
 on inventory click:
-	name of event-inventory is "呪詛使用対象を選択"
+	name of event-inventory is "呪詛対象を選択"
 	cancel event
 	event-inventory is not player's inventory
 	event-slot is not empty
