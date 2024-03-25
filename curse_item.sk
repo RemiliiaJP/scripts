@@ -31,7 +31,7 @@ on inventory click:
 	close inventory for player
 
 function openCurse(p: player):
-	set {_gui} to chest inventory with 6 rows named "呪詛使用対象を選択"
+	set {_gui} to chest inventory with 6 rows named "呪詛対象を選択"
 	loop {player::*}:
 		set slot loop-counter - 1 of {_gui} to loop-value's skull named "%loop-value%"
 	open {_gui} to {_p}
