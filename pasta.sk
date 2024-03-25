@@ -23,5 +23,5 @@ on right click:
 on swap hand item:
 	event-player's tool is {pasta::2}
 	do while event-player's offhand tool is {pasta::2}:
-		knock event-player (vector from event-player to event-player) with strength 1
+		knock victim (vector from event-player to event-player) with strength 1
 		wait 1 tick
